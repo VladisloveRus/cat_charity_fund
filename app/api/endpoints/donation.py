@@ -1,22 +1,15 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
 
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud import (
-    create_donation as create,
-    get_donation_by_user,
-    read_all_donation_from_db,
-    start_investment_by_donation,
-)
-from app.schemas import (
-    DonationCreate,
-    DonationDB,
-)
 from app.core.db import get_async_session
-from app.core.user import current_superuser, current_user
-from app.models import Donation, User
-
+from app.core.user import current_user
+from app.crud import create_donation as create
+from app.crud import (get_donation_by_user, read_all_donation_from_db,
+                      start_investment_by_donation)
+from app.models import User
+from app.schemas import DonationCreate, DonationDB
 
 router = APIRouter(prefix='/donation', tags=['donations'])
 
@@ -26,7 +19,11 @@ router = APIRouter(prefix='/donation', tags=['donations'])
     response_model=DonationDB,
     response_model_exclude_none=True,
     response_model_exclude={
-        'close_date', 'fully_invested', 'invested_amount', 'user_id'},
+        'close_date',
+        'fully_invested',
+        'invested_amount',
+        'user_id',
+    },
 )
 async def create_donation(
     donation: DonationCreate,
@@ -56,7 +53,11 @@ async def get_all_donations(
     response_model=List[DonationDB],
     response_model_exclude_none=True,
     response_model_exclude={
-        'close_date', 'fully_invested', 'invested_amount', 'user_id'},
+        'close_date',
+        'fully_invested',
+        'invested_amount',
+        'user_id',
+    },
 )
 async def get_user_donations(
     session: AsyncSession = Depends(get_async_session),

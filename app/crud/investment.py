@@ -1,9 +1,8 @@
 from datetime import datetime
-from typing import List, Union
+from typing import List
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.expression import false
 
 from app.models import CharityProject, Donation
 
@@ -37,6 +36,7 @@ async def start_investment_by_donation(
                 donation.close_date = datetime.now()
     await session.commit()
     return donation
+
 
 async def start_investment_by_project(
     project: CharityProject, session: AsyncSession

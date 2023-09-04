@@ -1,12 +1,12 @@
-from typing import Optional, List
+from typing import List, Optional
 
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.encoders import jsonable_encoder
 
-from app.core.db import AsyncSessionLocal
 from app.models import CharityProject
-from app.schemas.charity_project import CharityProjectCreate, CharityProjectUpdate
+from app.schemas.charity_project import (CharityProjectCreate,
+                                         CharityProjectUpdate)
 
 
 async def create_charity_project(
@@ -50,10 +50,11 @@ async def get_project_by_id(
     db_project = db_project.scalars().first()
     return db_project
 
+
 async def update_charity_project(
-        db_project: CharityProject,
-        project_in: CharityProjectUpdate,
-        session: AsyncSession,
+    db_project: CharityProject,
+    project_in: CharityProjectUpdate,
+    session: AsyncSession,
 ) -> CharityProject:
     obj_data = jsonable_encoder(db_project)
     update_data = project_in.dict(exclude_unset=True)
@@ -64,11 +65,12 @@ async def update_charity_project(
     session.add(db_project)
     await session.commit()
     await session.refresh(db_project)
-    return db_project 
+    return db_project
+
 
 async def delete_charity_project(
-        db_charity_project: CharityProject,
-        session: AsyncSession,
+    db_charity_project: CharityProject,
+    session: AsyncSession,
 ) -> CharityProject:
     await session.delete(db_charity_project)
     await session.commit()

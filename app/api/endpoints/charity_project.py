@@ -1,26 +1,18 @@
 from typing import List
-from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException
 
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud import (
-    create_charity_project as create,
-    get_project_id_by_name,
-    read_all_projects_from_db,
-    update_charity_project as update,
-    get_project_by_id,
-    delete_charity_project as delete,
-    start_investment_by_project,
-)
-from app.schemas import (
-    CharityProjectCreate,
-    CharityProjectDB,
-    CharityProjectUpdate,
-)
 from app.core.db import get_async_session
 from app.core.user import current_superuser
+from app.crud import create_charity_project as create
+from app.crud import delete_charity_project as delete
+from app.crud import (get_project_by_id, get_project_id_by_name,
+                      read_all_projects_from_db, start_investment_by_project)
+from app.crud import update_charity_project as update
 from app.models import CharityProject
+from app.schemas import (CharityProjectCreate, CharityProjectDB,
+                         CharityProjectUpdate)
 
 router = APIRouter(prefix='/charity_project', tags=['charity_project'])
 
@@ -76,7 +68,7 @@ async def update_charity_project(
 
     if obj_in.name is not None:
         await check_name_duplicate(obj_in.name, session)
-    
+
     if obj_in.full_amount is not None:
         if charity_project.invested_amount > obj_in.full_amount:
             raise HTTPException(
