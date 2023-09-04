@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Donation, User
-from app.schemas.donation import DonationCreate, DonationDB
+from app.schemas.donation import DonationCreate
 
 
 async def create_donation(

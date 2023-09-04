@@ -12,7 +12,7 @@ async def start_investment_by_donation(
 ):
     uninvested_projects = await session.execute(
         select(CharityProject)
-        .where(CharityProject.fully_invested == False)
+        .where(CharityProject.fully_invested == 0)
         .order_by(CharityProject.create_date)
     )
     uninvested_projects_list: List[
@@ -43,7 +43,7 @@ async def start_investment_by_project(
 ):
     uninvested_donations = await session.execute(
         select(Donation)
-        .where(Donation.fully_invested == False)
+        .where(Donation.fully_invested == 0)
         .order_by(Donation.create_date)
     )
     uninvested_donations_list: List[
