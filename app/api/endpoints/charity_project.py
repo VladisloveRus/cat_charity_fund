@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -42,8 +43,7 @@ async def create_charity_project(
 async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session),
 ):
-    all_projects = await read_all_projects_from_db(session)
-    return all_projects
+    return await read_all_projects_from_db(session)
 
 
 @router.patch(
@@ -62,7 +62,7 @@ async def update_charity_project(
 
     if charity_project.fully_invested:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Закрытый проект нельзя редактировать!',
         )
 
@@ -72,11 +72,12 @@ async def update_charity_project(
     if obj_in.full_amount is not None:
         if charity_project.invested_amount > obj_in.full_amount:
             raise HTTPException(
-                status_code=400,
-                detail='При редактировании проекта должно быть запрещено устанавливать требуемую сумму меньше внесённой!',
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail=(
+                    'При редактировании проекта должно быть запрещено',
+                    'устанавливать требуемую сумму меньше внесённой!'),
             )
-    charity_project_result = await update(charity_project, obj_in, session)
-    return charity_project_result
+    return await update(charity_project, obj_in, session)
 
 
 @router.delete(
@@ -93,11 +94,10 @@ async def delete_charity_project(
     )
     if charity_project.invested_amount > 0:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='В проект были внесены средства, не подлежит удалению!',
         )
-    charity_project = await delete(charity_project, session)
-    return charity_project
+    return await delete(charity_project, session)
 
 
 async def check_name_duplicate(
@@ -107,7 +107,7 @@ async def check_name_duplicate(
     project_id = await get_project_id_by_name(project_name, session)
     if project_id is not None:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail='Проект с таким именем уже существует!',
         )
 
@@ -118,5 +118,8 @@ async def check_charity_project_exists(
 ) -> CharityProject:
     charity_project = await get_project_by_id(charity_project_id, session)
     if charity_project is None:
-        raise HTTPException(status_code=404, detail='Проект не найден!')
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Проект не найден!'
+        )
     return charity_project

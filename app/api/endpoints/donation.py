@@ -44,8 +44,7 @@ async def create_donation(
 async def get_all_donations(
     session: AsyncSession = Depends(get_async_session),
 ):
-    all_donations = await read_all_donation_from_db(session)
-    return all_donations
+    return await read_all_donation_from_db(session)
 
 
 @router.get(
@@ -63,5 +62,4 @@ async def get_user_donations(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_user),
 ):
-    all_donations = await get_donation_by_user(session, user)
-    return all_donations
+    return await get_donation_by_user(session, user)

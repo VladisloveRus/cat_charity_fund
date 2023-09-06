@@ -29,8 +29,7 @@ async def get_project_id_by_name(
     db_project_id = await session.execute(
         select(CharityProject.id).where(CharityProject.name == project_name)
     )
-    db_project_id = db_project_id.scalars().first()
-    return db_project_id
+    return db_project_id.scalars().first()
 
 
 async def read_all_projects_from_db(
@@ -47,8 +46,7 @@ async def get_project_by_id(
     db_project = await session.execute(
         select(CharityProject).where(CharityProject.id == project_id)
     )
-    db_project = db_project.scalars().first()
-    return db_project
+    return db_project.scalars().first()
 
 
 async def update_charity_project(
